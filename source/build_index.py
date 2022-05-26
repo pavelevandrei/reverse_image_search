@@ -15,8 +15,11 @@ emb_array = emb_array / norm # нормализация
 
 ids = np.array(range(0, emb_array.shape[0]))
 ids = np.asarray(ids.astype('int64'))
-# ids = np.arange(emb_array.shape[0])
 
-index = index = faiss.IndexIDMap(faiss.IndexFlatL2(emb_array.shape[1]))
+
+index = index = faiss.IndexIDMap(faiss.IndexFlatL2(emb_array.shape[1])) # IndexFlatIP для косинусного расстояния
 index.add_with_ids(emb_array, ids)
 print(index.ntotal)
+D, I = index.search(emb_array[:5], TOPN)
+print(I)
+print(D)
