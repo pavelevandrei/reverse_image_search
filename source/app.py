@@ -1,6 +1,8 @@
 import os
 import pickle
 from time import sleep
+import urllib.request
+
 import pandas as pd
 from towhee import pipeline
 
@@ -10,22 +12,24 @@ embedding = embedding_pipeline('https://docs.towhee.io/img/logo.png')
 print(type(embedding_pipeline))
 print(embedding)
 
-file_name = "78815338_post_attachment.csv"
-emb_file = file_name.split("_")[0]
+owner_id = "78815338"
+file_name = f"{owner_id}_post_attachment.csv"
+
 url_path = os.path.join("..", "data", "clean_urls", file_name)
 df = pd.read_csv(url_path)
 urls = df["url"].tolist()
 #print(urls)
+
 embedding_list = []
-for i, url in enumerate(urls[:5]):
+for i, url in enumerate(urls[:]):
     print(f"Обрабатывает {i} изображение")
-    
+    urllib.request.urlretrieve(url, os.path.join("..", "data", "images", owner_id, f"{i}.jpg"))
     embedding = embedding_pipeline(url)
     embedding_list.append(embedding)
     sleep(0.4)
 
-emb_path = os.path.join("..", "data", "embeddings", emb_file)
+emb_path = os.path.join("..", "data", "embeddings", f"{owner_id}.pickle")
 with open(emb_path, 'wb') as file:
     pickle.dump(embedding_list, file)
 
-print(embedding_list)
+#print(embedding_list)
