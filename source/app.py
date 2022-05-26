@@ -7,10 +7,9 @@ import pandas as pd
 from towhee import pipeline
 
 embedding_pipeline = pipeline('image-embedding')
-embedding = embedding_pipeline('https://docs.towhee.io/img/logo.png')
-
-print(type(embedding_pipeline))
-print(embedding)
+# embedding = embedding_pipeline('https://docs.towhee.io/img/logo.png')
+# print(type(embedding_pipeline))
+# print(embedding)
 
 owner_id = "78815338"
 file_name = f"{owner_id}_post_attachment.csv"
