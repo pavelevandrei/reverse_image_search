@@ -13,7 +13,7 @@ with open(emb_path, 'rb') as file:
     embedding_list = pickle.load(file)
 emb_array = np.array(embedding_list, np.float32)
 
-# индентификаторы - порядок файла в папке
+# индентификаторы - порядковый номер файла в папке
 ids = np.array(range(0, emb_array.shape[0]))
 ids = np.asarray(ids.astype('int64'))
 
