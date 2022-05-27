@@ -2,9 +2,10 @@ import os
 import pickle
 from time import sleep
 import urllib.request
-
+import numpy as np
 import pandas as pd
 from towhee import pipeline
+
 
 class EmbeddingCalculator():
     embedding_pipeline = None
@@ -38,15 +39,12 @@ if __name__ == '__main__':
     for i, url in enumerate(url_list[:]):
         print(f"Обрабатывает {i} изображение")
         urllib.request.urlretrieve(url, os.path.join("..", "data", "images", "all", f"{i}.jpg"))
-        embedding = ec.calculate_emb(url)
+        embedding = ec.calculate_emb(os.path.join("..", "data", "images", "all", f"{i}.jpg"))
+        embedding = embedding / np.linalg.norm(embedding)  # нормируем эмбеддинг
         embedding_list.append(embedding)
-        sleep(0.01)
+        #sleep(0.01) # опционально во время загрузки
 
-    # emb_path = os.path.join("..", "data", "embeddings", f"{owner_id}.pickle")
     emb_path = os.path.join("..", "data", "embeddings", f"all.pickle")
     with open(emb_path, 'wb') as file:
         pickle.dump(embedding_list, file)
-
-    # print(embedding_list)
-
 
