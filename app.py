@@ -1,10 +1,12 @@
-import numpy as np
 import os
+from uuid import uuid4
+import numpy as np
 import faiss
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from source.calculate_and_load_emb import EmbeddingCalculator
+import io
 
 
 TOPN = 9
@@ -33,68 +35,73 @@ st.markdown(f"""
 * Присваиваем каждому изображению идентификатор
 * Рассчитываем векторное представление (эмбеддинг), используемая модель **resnet50**
 * Полученные векторные представления индексируем в эффективной структуре для поиска с помощью библиотеки **faiss**
-* Пользователь может загрузить изображение и найти похожие на него изображения в сообществах-барахолках
+* Пользователь может загрузить изображение и найти похожие на него изображения (по косинусному расстоянию) в сообществах-барахолках
 *** 
 """)
 
-images_count = len(os.listdir(os.path.join("data", "images", "all")))
-image_number = int(st.number_input(label="Введите номер изображения", value=0, min_value=0, max_value=images_count-1, step=1))
 
-image = mpimg.imread(os.path.join("data", "images", "all", f"{image_number}.jpg"))
+uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file is not None:
+    # считываем файл как байты
+    bytes_data = uploaded_file.getvalue()
+    # записываем в файл
+    name = uuid4()
+    with open(os.path.join("data", "loaded_images", f"{name}.jpg"), "wb") as f:
+        f.write(bytes_data)
 
-st.image(image)
+    # отображаем изображение
+    image = mpimg.imread(os.path.join("data", "loaded_images", f"{name}.jpg"))
+    st.image(image)
+    # формируем поисковый эмбеддинг
+    search_vector = np.array(ec.calculate_emb(os.path.join("data", "loaded_images", f"{name}.jpg")),
+                             dtype='float32').reshape(1, -1)
+    norm = np.linalg.norm(search_vector)
+    search_vector = search_vector / norm
 
-search_vector = np.array(ec.calculate_emb(os.path.join("data", "images", "all", f"{image_number}.jpg")), dtype='float32').reshape(1,-1)
-norm = np.linalg.norm(search_vector)
-search_vector = search_vector / norm
+    st.write(search_vector)
+    st.caption("Эмбеддинг изображения")
 
-st.write(search_vector)
-st.caption("Эмбеддинг изображения")
+    # выполняем поиск по вектору
+    D, I = index.search(search_vector, TOPN)
+
+    st.markdown(f"""
+        ***
+        Похожие изображения
+
+        """)
+
+    # отображаем в колонках изображения, идентификаторы и косинусное расстояние
+    col1, col2, col3 = st.columns(3)
+    image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][0]}.jpg"))
+    image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][1]}.jpg"))
+    image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][2]}.jpg"))
+    col1.image(image1)
+    col1.caption(f"Идентификатор изображения - {I[0][0]}, расстояние - {round(D[0][0], 3)}")
+    col2.image(image2)
+    col2.caption(f"Идентификатор изображения - {I[0][1]}, расстояние - {round(D[0][1], 3)}")
+    col3.image(image3)
+    col3.caption(f"Идентификатор изображения - {I[0][2]}, расстояние - {round(D[0][2], 3)}")
+
+    col1, col2, col3 = st.columns(3)
+    image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][3]}.jpg"))
+    image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][4]}.jpg"))
+    image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][5]}.jpg"))
+    col1.image(image1)
+    col1.caption(f"Идентификатор изображения - {I[0][3]}, расстояние - {round(D[0][3], 3)}")
+    col2.image(image2)
+    col2.caption(f"Идентификатор изображения - {I[0][4]}, расстояние - {round(D[0][4], 3)}")
+    col3.image(image3)
+    col3.caption(f"Идентификатор изображения - {I[0][5]}, расстояние - {round(D[0][5], 3)}")
+
+    col1, col2, col3 = st.columns(3)
+    image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][6]}.jpg"))
+    image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][7]}.jpg"))
+    image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][8]}.jpg"))
+    col1.image(image1)
+    col1.caption(f"Идентификатор изображения - {I[0][6]}, расстояние - {round(D[0][6], 3)}")
+    col2.image(image2)
+    col2.caption(f"Идентификатор изображения - {I[0][7]}, расстояние - {round(D[0][7], 3)}")
+    col3.image(image3)
+    col3.caption(f"Идентификатор изображения - {I[0][8]}, расстояние - {round(D[0][8], 3)}")
 
 
-
-D, I = index.search(search_vector, TOPN)
-
-
-st.markdown(f"""
-***
-Похожие изображения
-
-""")
-
-col1, col2, col3 = st.columns(3)
-
-image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][0]}.jpg"))
-
-image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][1]}.jpg"))
-image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][2]}.jpg"))
-col1.image(image1)
-col1.caption(f"Идентификатор изображения - {I[0][0]}, расстояние - {round(D[0][0], 3)}")
-col2.image(image2)
-col2.caption(f"Идентификатор изображения - {I[0][1]}, расстояние - {round(D[0][1], 3)}")
-col3.image(image3)
-col3.caption(f"Идентификатор изображения - {I[0][2]}, расстояние - {round(D[0][2], 3)}")
-
-col1, col2, col3 = st.columns(3)
-
-image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][3]}.jpg"))
-image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][4]}.jpg"))
-image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][5]}.jpg"))
-col1.image(image1)
-col1.caption(f"Идентификатор изображения - {I[0][3]}, расстояние - {round(D[0][3], 3)}")
-col2.image(image2)
-col2.caption(f"Идентификатор изображения - {I[0][4]}, расстояние - {round(D[0][4], 3)}")
-col3.image(image3)
-col3.caption(f"Идентификатор изображения - {I[0][5]}, расстояние - {round(D[0][5], 3)}")
-
-col1, col2, col3 = st.columns(3)
-
-image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][6]}.jpg"))
-image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][7]}.jpg"))
-image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][8]}.jpg"))
-col1.image(image1)
-col1.caption(f"Идентификатор изображения - {I[0][6]}, расстояние - {round(D[0][6], 3)}")
-col2.image(image2)
-col2.caption(f"Идентификатор изображения - {I[0][7]}, расстояние - {round(D[0][7], 3)}")
-col3.image(image3)
-col3.caption(f"Идентификатор изображения - {I[0][8]}, расстояние - {round(D[0][8], 3)}")
