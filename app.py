@@ -2,6 +2,8 @@ import numpy as np
 import os
 import faiss
 import streamlit as st
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 from source.calculate_and_load_emb import EmbeddingCalculator
 
 ## cache?
@@ -30,10 +32,18 @@ st.markdown(f"""
 
 images_count = len(os.listdir(os.path.join("data", "images", "all")))
 
-image_number = st.number_input(label="Введите номер изображения", value=0, min_value=0, max_value=images_count-1, step=1)
+image_number = int(st.number_input(label="Введите номер изображения", value=0, min_value=0, max_value=images_count-1, step=1))
+
+image = mpimg.imread(os.path.join("data", "images", "all", f"{image_number}.jpg"))
+
+st.image(image)
+
+search_vector = np.array(ec.calculate_emb(os.path.join("data", "images", "all", f"{image_number}.jpg")), dtype='float32').reshape(1,-1)
 
 
-search_vector = np.array(ec.calculate_emb(os.path.join("data", "images", "all", "1.jpg")), dtype='float32').reshape(1,-1)
+st.write(search_vector)
+st.caption("Эмбеддинг изображения")
+
 
 print(search_vector.shape)
 
