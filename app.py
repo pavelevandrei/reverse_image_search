@@ -7,7 +7,7 @@ import matplotlib.image as mpimg
 from source.calculate_and_load_emb import EmbeddingCalculator
 
 ## cache?
-TOPN = 6
+TOPN = 9
 
 ec = EmbeddingCalculator()
 
@@ -49,8 +49,8 @@ st.caption("Эмбеддинг изображения")
 print(search_vector.shape)
 
 
-
 D, I = index.search(search_vector, TOPN)
+print(D)
 print(I)
 
 st.markdown(f"""
@@ -58,6 +58,7 @@ st.markdown(f"""
 Похожие изображения
 
 """)
+st.write(I)
 st.write(D)
 col1, col2, col3 = st.columns(3)
 
@@ -78,5 +79,20 @@ image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][3]}.jpg"))
 image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][4]}.jpg"))
 image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][5]}.jpg"))
 col1.image(image1)
+col1.caption(f"Идентификатор изображения - {I[0][3]}, расстояние - {round(D[0][3])}")
 col2.image(image2)
+col2.caption(f"Идентификатор изображения - {I[0][4]}, расстояние - {round(D[0][4])}")
 col3.image(image3)
+col3.caption(f"Идентификатор изображения - {I[0][5]}, расстояние - {round(D[0][5])}")
+
+col1, col2, col3 = st.columns(3)
+
+image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][6]}.jpg"))
+image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][7]}.jpg"))
+image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][8]}.jpg"))
+col1.image(image1)
+col1.caption(f"Идентификатор изображения - {I[0][6]}, расстояние - {round(D[0][6])}")
+col2.image(image2)
+col2.caption(f"Идентификатор изображения - {I[0][7]}, расстояние - {round(D[0][7])}")
+col3.image(image3)
+col3.caption(f"Идентификатор изображения - {I[0][8]}, расстояние - {round(D[0][8])}")
