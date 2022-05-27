@@ -17,9 +17,10 @@ ids = np.array(range(0, emb_array.shape[0]))
 ids = np.asarray(ids.astype('int64'))
 
 
-index = index = faiss.IndexIDMap(faiss.IndexFlatL2(emb_array.shape[1])) # IndexFlatIP для косинусного расстояния
+index = faiss.IndexIDMap(faiss.IndexFlatL2(emb_array.shape[1])) # IndexFlatIP для косинусного расстояния
 index.add_with_ids(emb_array, ids)
 print(index.ntotal)
 D, I = index.search(emb_array[5333:5338], TOPN)
 print(I)
 print(D)
+faiss.write_index(index, os.path.join("..", "data", "indices","flat.index"))
