@@ -6,10 +6,18 @@ import urllib.request
 import pandas as pd
 from towhee import pipeline
 
-embedding_pipeline = pipeline('image-embedding')
-# embedding = embedding_pipeline('https://docs.towhee.io/img/logo.png')
-# print(type(embedding_pipeline))
-# print(embedding)
+class EmbeddingCalculator():
+    embedding_pipeline = None
+
+    def __init__(self):
+        self.embedding_pipeline = pipeline('image-embedding')
+
+    def calculate_emb(self, url):
+        return self.embedding_pipeline(url)
+
+
+ec = EmbeddingCalculator()
+
 
 owner_id_df = pd.read_csv(os.path.join("..", "data", "owner_ids.csv"))
 owner_ids = owner_id_df["owner_id"].tolist()
@@ -30,7 +38,7 @@ embedding_list = []
 for i, url in enumerate(url_list[:]):
     print(f"Обрабатывает {i} изображение")
     urllib.request.urlretrieve(url, os.path.join("..", "data", "images", "all", f"{i}.jpg"))
-    embedding = embedding_pipeline(url)
+    embedding = ec.calculate_emb(url)
     embedding_list.append(embedding)
     sleep(0.01)
 
