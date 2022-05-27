@@ -39,7 +39,8 @@ image = mpimg.imread(os.path.join("data", "images", "all", f"{image_number}.jpg"
 st.image(image)
 
 search_vector = np.array(ec.calculate_emb(os.path.join("data", "images", "all", f"{image_number}.jpg")), dtype='float32').reshape(1,-1)
-
+norm = np.linalg.norm(search_vector)
+search_vector = search_vector / norm
 
 st.write(search_vector)
 st.caption("Эмбеддинг изображения")
@@ -52,11 +53,30 @@ print(search_vector.shape)
 D, I = index.search(search_vector, TOPN)
 print(I)
 
+st.markdown(f"""
+***
+Похожие изображения
+
+""")
+st.write(D)
 col1, col2, col3 = st.columns(3)
 
 image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][0]}.jpg"))
+
 image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][1]}.jpg"))
 image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][2]}.jpg"))
+col1.image(image1)
+col1.caption(f"Идентификатор изображения - {I[0][0]}, расстояние - {round(D[0][0])}")
+col2.image(image2)
+col2.caption(f"Идентификатор изображения - {I[0][1]}, расстояние - {round(D[0][1])}")
+col3.image(image3)
+col3.caption(f"Идентификатор изображения - {I[0][2]}, расстояние - {round(D[0][2])}")
+
+col1, col2, col3 = st.columns(3)
+
+image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][3]}.jpg"))
+image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][4]}.jpg"))
+image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][5]}.jpg"))
 col1.image(image1)
 col2.image(image2)
 col3.image(image3)
