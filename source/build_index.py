@@ -7,7 +7,7 @@ import faiss
 TOPN = 6
 FAISS_PARAMETERS_STRING = "IVF120,SQ8" # тип индекса
 
-# загружаем массив эмбеддингов
+# загружаем массив эмбеддингов из файла
 emb_path = os.path.join("..", "data", "embeddings", f"all.pickle")
 with open(emb_path, 'rb') as file:
     embedding_list = pickle.load(file)
