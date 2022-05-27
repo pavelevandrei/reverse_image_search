@@ -51,3 +51,12 @@ print(search_vector.shape)
 
 D, I = index.search(search_vector, TOPN)
 print(I)
+
+col1, col2, col3 = st.columns(3)
+
+image1 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][0]}.jpg"))
+image2 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][1]}.jpg"))
+image3 = mpimg.imread(os.path.join("data", "images", "all", f"{I[0][2]}.jpg"))
+col1.image(image1)
+col2.image(image2)
+col3.image(image3)
