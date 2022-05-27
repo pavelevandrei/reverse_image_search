@@ -40,7 +40,7 @@ st.markdown(f"""
 """)
 
 
-uploaded_file = st.file_uploader("Choose a file")
+uploaded_file = st.file_uploader("Пожалуйста, загрузите изображение для поиска")
 if uploaded_file is not None:
     # считываем файл как байты
     bytes_data = uploaded_file.getvalue()
