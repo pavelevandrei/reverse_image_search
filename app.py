@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from source.calculate_and_load_emb import EmbeddingCalculator
 
-## cache?
+
 TOPN = 9
+
 
 @st.experimental_singleton
 def load_embedding_calculator():
@@ -21,6 +22,7 @@ def load_index():
     index.nprobe = 30
     return index
 index=load_index()
+
 
 st.title(f"Поиск похожих изображений для модерации сетевых сообществ")
 st.markdown(f"""
@@ -36,7 +38,6 @@ st.markdown(f"""
 """)
 
 images_count = len(os.listdir(os.path.join("data", "images", "all")))
-
 image_number = int(st.number_input(label="Введите номер изображения", value=0, min_value=0, max_value=images_count-1, step=1))
 
 image = mpimg.imread(os.path.join("data", "images", "all", f"{image_number}.jpg"))
